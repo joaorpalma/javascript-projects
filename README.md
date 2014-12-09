@@ -1,4 +1,4 @@
-city-generator-javascript
+Javascript Projects
 =========================
 
 Simple projects, done with javascript(jquery/threejs/...)
