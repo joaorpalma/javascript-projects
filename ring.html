@@ -1,0 +1,109 @@
+<html>
+        <head>
+            <style>
+                body {
+                    /* set margin to 0 and overflow to hidden, to go fullscreen */
+                    margin: 0;
+                    overflow: hidden;
+                }
+            </style>
+            <script src="threejs/three.min.js"></script>
+            <script src="libs/dat.gui.min.js"></script>
+        </head>
+        <body>
+                <script>
+                        var myscene = new THREE.Scene();
+                        var mycamera = new THREE.PerspectiveCamera( 20, window.innerWidth / window.innerHeight, 1, 1000 );
+                        mycamera.position.set(50,50,50);
+                        mycamera.lookAt(new THREE.Vector3( -1, -1, -1 ));
+                        myscene.add( mycamera );
+                        var myrenderer = new THREE.WebGLRenderer();
+                        myrenderer.setSize(window.innerWidth,window.innerHeight);
+                        myrenderer.setClearColor(0x008B8B, 1); 
+						
+                        var materials = [
+                            new THREE.MeshBasicMaterial({color:0xFFFFFF}),
+                            new THREE.MeshBasicMaterial({color:0x000000})
+                        ];
+						
+                        var ns = 25;
+						var re = 10, ri = 5;
+                        var raio = (Math.PI*2)/ns;
+                        var anglo = 0;
+						
+                        mytriag = new THREE.Geometry();
+                        
+						//anel interno
+						 for (i=0; i<ns; i++) {
+                             mytriag.vertices.push(
+                             new THREE.Vector3(
+                                ri * Math.cos(anglo),
+                                ri * Math.sin(anglo)));	 
+                             anglo = anglo + raio;
+							}
+							
+						//anel externo
+						for (i=0; i<ns; i++) {
+                             mytriag.vertices.push(
+                             new THREE.Vector3(
+                                 re * Math.cos(anglo),
+                                 re * Math.sin(anglo)));
+                             anglo = anglo + raio;
+							}
+							
+						for (i=0; i<ns; i++) {
+                            if (i<ns-1) 
+								{
+									mytri = new THREE.Face3(i,i+ns+1,i+1);
+									mytri.materialIndex=((i*2)+1) % materials.length;
+									mytriag.faces.push(mytri);
+									
+									mytri = new THREE.Face3(i,i+ns,i+ns+1);
+									mytri.materialIndex=(i*2) % materials.length;
+									mytriag.faces.push(mytri);
+								} 
+							else 
+								{
+									mytri = new THREE.Face3(i,i+1,i-(ns-1));
+									mytri.materialIndex=((i*2)+1) % materials.length;
+									mytriag.faces.push(mytri);
+									
+									mytri = new THREE.Face3(i,i+ns,i+1);
+									mytri.materialIndex=(i*2) % materials.length;
+									mytriag.faces.push(mytri); 
+								}
+							}
+							
+							
+						var material = new THREE.MeshFaceMaterial(materials);
+                        var anel = new THREE.Mesh(mytriag,material);
+						
+                        anel.rotation.y = 0.65;
+                        anel.rotation.x = -0.785;
+                        myscene.add(anel);
+						
+						myaxis = new THREE.AxisHelper(50);
+                        myscene.add(myaxis);
+                                              
+                        var rotControls = {
+                                rotx:0.0,
+                                roty:0.0,
+                                rotz:0.01}
+                       
+                        var guirc = new dat.GUI();
+                        guirc.add(rotControls,'rotx',-.50,.50).step(0.05);
+                        guirc.add(rotControls,'roty',-.50,.50).step(0.05);
+                        guirc.add(rotControls,'rotz',-.50,.50).step(0.05);
+                       
+                        function doRender() {
+                                requestAnimationFrame(doRender);
+                                anel.rotation.x += rotControls.rotx;
+                                anel.rotation.y += rotControls.roty;
+                                anel.rotation.z += rotControls.rotz;
+                                myrenderer.render(myscene,mycamera);}
+								
+						document.body.appendChild(myrenderer.domElement);
+                        doRender();
+                </script>
+        </body>
+</html>
