@@ -14,4 +14,4 @@ Simple projects, done with javascript(jquery/threejs/...)
 So this are little projects of mine, just messing arround with javascript. 
 
 
-@ 2014 João Palma.
+@ João Palma.
